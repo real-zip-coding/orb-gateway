@@ -1,0 +1,57 @@
+buildscript {
+    ext {
+        applicationVer = '0.1.0'
+        googleApiVer = '2.3.0'
+        jsonSimpleVer = '1.1.1'
+        modelmapperVer = '3.0.0'
+        jaxbApiVer = '2.3.1'
+        junitJupiterVer = '5.8.1'
+        testngVer = '7.1.0'
+        nimbusdsVer = '3.10'
+        servletApi = '4.0.1'
+    }
+}
+
+plugins {
+    id 'base-frame'
+    id 'common'
+    id 'web'
+    id 'db'
+}
+
+group = "us.musicow.client.v1"
+
+jar {
+    enabled = false
+}
+
+configurations {
+    all{
+        exclude module: 'spring-boot-starter-tomcat'
+        exclude module: 'undertow-websockets-jsr'
+    }
+}
+
+bootJar {
+    enabled = true
+    archiveBaseName = "api-module"
+}
+
+dependencies {
+    implementation project(path: ":orb-common-module")
+    implementation "org.springframework.boot:spring-boot-starter-security"
+    implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
+    implementation "com.google.api-client:google-api-client:${googleApiVer}"
+
+    // Bulk index document 작업시 에러발생.
+    implementation "com.googlecode.json-simple:json-simple:${jsonSimpleVer}"
+    implementation "org.modelmapper:modelmapper:${modelmapperVer}"
+    implementation "javax.xml.bind:jaxb-api:${jaxbApiVer}"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVer}"
+    testImplementation "com.squareup.okhttp3:mockwebserver"
+    testImplementation "org.testng:testng:${testngVer}"
+    testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc"
+
+}

@@ -1,0 +1,29 @@
+ext {
+    gsonVer = "2.10.1"
+    jsonSimpleVer = "1.1.1"
+    jsonWebTokenVer = "0.9.1"
+//    servletApi = "4.0.1"
+    cloudCommonVer = "5.0.0-M2"
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.cloud:spring-cloud-commons:${cloudCommonVer}"
+
+    implementation "com.googlecode.json-simple:json-simple:${jsonSimpleVer}"
+    implementation "com.google.code.gson:gson:${gsonVer}"
+    implementation "org.apache.commons:commons-lang3"
+    implementation "io.jsonwebtoken:jjwt:${jsonWebTokenVer}"
+//    implementation "javax.servlet:javax.servlet-api:${servletApi}"
+
+    annotationProcessor "org.projectlombok:lombok"
+    annotationProcessor "com.fasterxml.jackson.core:jackson-core"
+    annotationProcessor "com.fasterxml.jackson.core:jackson-databind"
+    annotationProcessor "com.fasterxml.jackson.core:jackson-annotations"
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+
+}
+
+tasks.named("test") {
+    useJUnitPlatform()
+}

@@ -1,0 +1,17 @@
+plugins {
+    id "base-frame"
+    id "common"
+}
+
+dependencies {
+    implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server") {
+        exclude group: "org.springframework.boot", module: "spring-boot-starter-actuator"
+    }
+
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:2025.0.0"
+    }
+}

@@ -1,0 +1,13 @@
+server:
+  port: 9000 # 인증 서버의 기본 포트
+
+spring:
+  application:
+    name: orb-auth-server
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka # Eureka 서버 URL
+  instance:
+    hostname: localhost

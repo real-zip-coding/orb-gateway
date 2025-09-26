@@ -1,0 +1,37 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: orb-gateway-api
+  cloud:
+#    compatibility-verifier:
+#      enabled: false # Spring Boot 3.5.0과 Spring Cloud 릴리스 트레인 호환성 검사 비활성화
+    gateway:
+      default-filters:
+        - AddResponseHeader=X-Gateway, favy-gateway
+      server:
+        webflux:
+          routes:
+          # 가상의 'command-service'에 대한 예시 라우트
+          - id: command_service_route
+            uri: lb://command-service # Eureka에 등록된 'command-service'로 로드 밸런싱
+            predicates:
+              - Path=/command/**
+            filters:
+              - RewritePath=/command/(?<segment>.*), /${segment}
+
+          # 가상의 'query-service'에 대한 예시 라우트
+          - id: query_service_route
+            uri: lb://query-service # Eureka에 등록된 'query-service'로 로드 밸런싱
+            predicates:
+              - Path=/query/**
+            filters:
+              - RewritePath=/query/(?<segment>.*), /${segment}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka # Eureka 서버 URL
+  instance:
+    hostname: localhost

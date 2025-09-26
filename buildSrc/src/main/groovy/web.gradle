@@ -1,0 +1,37 @@
+plugins {
+    id "org.springframework.boot"
+    id "io.spring.dependency-management"
+    id "java"
+}
+
+ext {
+    springCloudVer = "2022.0.3"
+    undertowVer = "2.6.3"
+    openfeignVer = "4.0.3"
+    httpClient = "11.9"
+    aopVer = "3.3.2"
+    swaggerVer = "3.0.0"
+    swaggerNewVer = "2.2.0"
+    p6spyVer = "1.9.0"
+
+}
+
+dependencies {
+    // undertow 추가
+    implementation "org.springframework.boot:spring-boot-starter-undertow:${undertowVer}"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${openfeignVer}"
+    implementation "org.springframework.retry:spring-retry"
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-aop:${aopVer}"
+    implementation "io.github.openfeign:feign-jackson:12.3"
+    implementation "com.github.gavlyukovskiy:p6spy-spring-boot-starter:${p6spyVer}"
+
+    // Swagger for Springboot3.x
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-api:${swaggerNewVer}"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${swaggerNewVer}"
+    implementation "io.swagger.core.v3:swagger-annotations:2.2.21"
+
+    implementation "io.github.openfeign:feign-httpclient:${httpClient}"
+
+//    implementation "com.google.code.google-collections:google-collect:snapshot-20080530"
+}
