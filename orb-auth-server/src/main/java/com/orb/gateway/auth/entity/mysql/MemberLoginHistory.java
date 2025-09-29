@@ -22,7 +22,7 @@ public class MemberLoginHistory extends BaseTime {
     @Column(name = "member_login_type")
     private String loginType;
 
-    @Column(name = "member_device_app_uuid_value", nullable = false)
+    @Column(name = "member_device_app_uuid_value")
     private String appUid;
 
     @Enumerated(EnumType.STRING)

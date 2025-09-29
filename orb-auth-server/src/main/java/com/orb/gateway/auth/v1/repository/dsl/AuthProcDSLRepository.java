@@ -90,18 +90,6 @@ public class AuthProcDSLRepository {
         );
     }
 
-	public Optional<String> findLastNicknameWithPrefix(String prefix) {
-		return Optional.ofNullable(
-				queryFactory
-						.select(member.nickname)
-						.from(member)
-						.where(member.nickname.like(prefix + "%"))
-						.orderBy(member.nickname.desc())
-						.limit(1)
-						.fetchOne()
-		);
-	}
-
 	public long deleteRefreshToken(String email) {
 		MemberAuthToken authToken = this.findRefreshTokenByEmail(email).orElseThrow(
 				() -> new IllegalArgumentException("not found user info by email: " + email)

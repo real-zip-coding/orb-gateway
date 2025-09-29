@@ -43,12 +43,6 @@ public class Member extends BaseTime {
     @Column(name = "member_login_type", nullable = false)
     private AuthType authType;
 
-    @Column(name = "member_img_uri", nullable = false)
-    private String imgUri;
-
-    @Column(name = "member_nickname", nullable = false)
-    private String nickname;
-
     @Builder.Default
     @Column(name="member_status", nullable = false)
     private int memberStatus = MemberStatus.ACTIVE.getCode();
@@ -58,18 +52,6 @@ public class Member extends BaseTime {
 
     public enum AuthType {
         EMAIL, GOOGLE, APPLE;
-    }
-
-    public void updatePhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-    public void updateSSN(String ssn) {
-        this.ssn = ssn;
-    }
-
-    public void updateProfile(String nickname, String imgUri) {
-        this.nickname = nickname;
-        this.imgUri = imgUri;
     }
 
     public void updatePassword(String password) {
@@ -90,8 +72,6 @@ public class Member extends BaseTime {
         this.password = StringUtils.EMPTY;
         this.phoneNumber = StringUtils.EMPTY;
         this.ssn = StringUtils.EMPTY;
-        this.imgUri = StringUtils.EMPTY;
-        this.nickname = StringUtils.EMPTY;
         this.notificationCheck = null;
     }
 

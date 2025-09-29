@@ -67,7 +67,6 @@ spring:
     open-in-view: false
   jpa.properties.hibernate:
     physical_naming_strategy: com.orb.gateway.auth.common.util.ImprovedNamingStrategy
-#    dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
   data:
     redis:
