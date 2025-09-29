@@ -1,0 +1,13 @@
+MYSQL_URL: jdbc:mysql://localhost:3306/auth_db
+MYSQL_USERNAME: root
+MYSQL_PASSWORD: test1234!
+
+REDIS_URL: localhost
+REDIS_PORT: 6379
+REDIS_PW: test1234
+
+LOGGING_LEVEL: INFO
+LOGGING_PATTERN: "%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]){blue}%clr([${HOSTNAME}])[%thread][%X{uuid}][%p][%c]%clr([%M:%L]) - %msg %nopex%n%ex{full}"
+
+JWT_EXPIRED_TIME: 3600000 # 60m(ms)
+REFRESH_EXPIRED_TIME: 86400000 # 1d(ms)

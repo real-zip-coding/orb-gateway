@@ -5,9 +5,8 @@ plugins {
 }
 
 ext {
-    springCloudVer = "2022.0.3"
     undertowVer = "2.6.3"
-    openfeignVer = "4.0.3"
+    cloudCommonVer = "4.3.0"
     httpClient = "11.9"
     aopVer = "3.3.2"
     swaggerVer = "3.0.0"
@@ -19,7 +18,7 @@ ext {
 dependencies {
     // undertow 추가
     implementation "org.springframework.boot:spring-boot-starter-undertow:${undertowVer}"
-    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${openfeignVer}"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${cloudCommonVer}"
     implementation "org.springframework.retry:spring-retry"
     implementation "org.springframework.boot:spring-boot-starter-web"
     implementation "org.springframework.boot:spring-boot-starter-aop:${aopVer}"

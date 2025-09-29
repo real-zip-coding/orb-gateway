@@ -3,7 +3,7 @@ package com.orb.gateway.auth.v1.impl;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import com.orb.gateway.common.entity.mysql.Member;
+import com.orb.gateway.auth.entity.mysql.Member;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

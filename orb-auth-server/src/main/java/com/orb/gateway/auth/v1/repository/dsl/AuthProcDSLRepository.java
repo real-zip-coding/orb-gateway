@@ -2,21 +2,21 @@ package com.orb.gateway.auth.v1.repository.dsl;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import com.orb.gateway.common.entity.mysql.Member;
-import com.orb.gateway.common.entity.mysql.MemberAuthToken;
+import com.orb.gateway.auth.entity.mysql.Member;
+import com.orb.gateway.auth.entity.mysql.MemberAuthToken;
 import org.springframework.stereotype.Repository;
-import com.orb.gateway.common.model.AuthInfoDTO;
-import com.orb.gateway.common.v1.model.dto.PermissionDTO;
+import com.orb.gateway.auth.v1.model.dto.AuthInfoDTO;
+import com.orb.gateway.auth.v1.model.dto.PermissionDTO;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.fields;
-import static com.orb.gateway.common.entity.mysql.QMemberAuthToken.memberAuthToken;
-import static com.orb.gateway.common.entity.mysql.QMember.member;
-import static com.orb.gateway.common.entity.mysql.QRole.role;
-import static com.orb.gateway.common.entity.mysql.QMemberDevice.memberDevice;
-import static com.orb.gateway.common.entity.mysql.QMemberRoleBridge.memberRoleBridge;
+import static com.orb.gateway.auth.entity.mysql.QMemberAuthToken.memberAuthToken;
+import static com.orb.gateway.auth.entity.mysql.QMember.member;
+import static com.orb.gateway.auth.entity.mysql.QRole.role;
+import static com.orb.gateway.auth.entity.mysql.QMemberDevice.memberDevice;
+import static com.orb.gateway.auth.entity.mysql.QMemberRoleBridge.memberRoleBridge;
 
 @Repository
 @RequiredArgsConstructor

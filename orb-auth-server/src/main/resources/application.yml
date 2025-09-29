@@ -1,13 +1,122 @@
+active-profile: local
+
 server:
-  port: 9000 # 인증 서버의 기본 포트
+  port: 8080
+  undertow:
+    always-set-keep-alive: true # HTTP 사양에서 요구하지 않는 경우에도 'Connection: keep-alive' 헤더를 모든 응답에 추가해야 하는지 여부.
+    buffer-size: # 각 버퍼의 크기입니다. 기본값은 JVM에서 사용할 수 있는 최대 메모리 양에서 파생됩니다.
+    decode-url: true # URL을 디코딩해야 하는지 여부입니다. 비활성화하면 URL의 백분율로 인코딩된 문자가 그대로 유지됩니다.
+    direct-buffers: true # Java 힙 외부에 버퍼를 할당할지 여부입니다. 기본값은 JVM에서 사용할 수 있는 최대 메모리 양에서 파생됩니다.
+    eager-filter-init: true # 시작 시 서블릿 필터를 초기화해야 하는지 여부입니다.
+    max-parameters: # 허용되는 최대 쿼리 또는 경로 매개변수 수입니다. 이 제한은 해시 충돌 기반 DOS 공격을 방지하기 위해 존재합니다.
+    max-http-post-size: -1B # HTTP Post 콘텐츠의 최대 크기입니다. 값이 -1(기본값)이면 크기가 무제한입니다.
+    no-request-timeout: 30s # 연결이 서버에서 닫기 전에 요청을 처리하지 않고 유휴 상태로 있을 수 있는 시간입니다.
+    preserve-path-on-forward: false # 요청이 전달될 때 요청의 경로를 유지할지 여부입니다.
+    url-charset: UTF-8
+    threads:
+      io: 8 # DB나 API 호출같은 BlockingIO 가 많기 때문에 IO 스레드는 core * 2
+      worker: 800 # 일반적인 톰캣의 max-threads 보통 io*10~20 설정을 권장하나 요청이 많을경우 상향
+    accesslog:
+      dir: logs # Undertow access log directory.
+      enabled: true # Whether to enable the access log.
+      pattern: '%t %a "%r" %s (%D ms)'
+      prefix: access_log. # Log file name prefix.
+      suffix: log # Log file name suffix.
+      rotate: true
 
 spring:
+  profiles:
+    active: ${active-profile}
   application:
     name: orb-auth-server
+  main:
+    allow-bean-definition-overriding: true
+    mvc:
+      pathmatch:
+        matching-strategy: ant_path_matcher
+  datasource:
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: ${MYSQL_URL}?useUnicode=true&serverTimezone=UTC&useSSL=false&autoReconnect=true&failOverReadOnly=false&maxReconnects=10&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    hikari:
+      pool-name: orb-auth-server-db
+      transaction-isolation: Connection.TRANSACTION_READ_COMMITTED #transaction이 끝나지 않았을 때, 다른 transaction 에서 값을 읽는 경우 변경되지 않은 값을 읽는다
+      type: com.zaxxer.hikari.HikariDataSource
+      tcpKeepAlive: true
+      connection-test-query: SELECT 1 FROM DUAL
+      auto-commit: false
+      minimum-idle: 10 #HikariCP는 performance위해 maximum-pool-size 와 minimum-idle 값을 같은 값으로 설정 connection Pool 의 크기를 fix 하는 것을 강력하게 권장
+      maximum-pool-size: 10
+      idle-timeout: 980000
+      max-lifetime: 970000
+      keepalive-time: 300000
+      connectionTimeout: 30000
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+    show-sql: false
+    properties:
+      org:
+        hibernate:
+          default_batch_fetch_size: 1000
+      use-new-id-generator-mappings: false
+      order_inserts: true
+      order_updates: true
+      jdbc:
+        batch_size: 5000
+    open-in-view: false
+  jpa.properties.hibernate:
+    physical_naming_strategy: com.orb.gateway.auth.common.util.ImprovedNamingStrategy
+#    dialect: org.hibernate.dialect.MySQL5InnoDBDialect
 
+  data:
+    redis:
+      host: ${REDIS_URL}
+      port: ${REDIS_PORT}
+      password: ${REDIS_PW}
+      lettuce:
+        pool:
+          max-active: 20 # pool에 할당될 수 있는 커넥션 최대수
+          max-idle: 20 # pool의 'idle' 커넥션 최대수
+          min-idle: 10
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka # Eureka 서버 URL
   instance:
     hostname: localhost
+
+jwt:
+  secret: Musicow1234$$
+  expiredTime: ${JWT_EXPIRED_TIME}
+  refreshExpiredTime: ${REFRESH_EXPIRED_TIME}
+  claims: email # 인증 시 얻어올 정보
+
+logging:
+  level:
+    root: ${LOGGING_LEVEL}
+    org:
+      springframework:
+        transaction:
+          interceptor: INFO
+        orm:
+          jpa: INFO
+  logback:
+    rollingpolicy:
+      clean-history-on-start: false
+  pattern:
+    level: ${LOGGING_LEVEL}
+    console: ${LOGGING_PATTERN}
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    tagsSorter: alpha
+    operations-sorter: alpha
+    display-request-duration: true
+    path: /index.html

@@ -3,7 +3,7 @@ package com.orb.gateway.auth.v1.controller;
 import com.orb.gateway.auth.config.security.AuthenticationToken;
 import com.orb.gateway.auth.config.security.AuthenticationTokenProvider;
 import com.orb.gateway.auth.v1.model.dto.LoginRequestDTO;
-import com.orb.gateway.common.model.AuthMemberDeviceInfo;
+import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

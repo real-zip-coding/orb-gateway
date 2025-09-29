@@ -1,4 +1,4 @@
 rootProject.name = 'orb-parent'
 
-include('orb-gateway-api', 'orb-auth-server', 'orb-common-module', 'orb-eureka-server')
+include('orb-eureka-server', 'orb-gateway-api', 'orb-auth-server')
 

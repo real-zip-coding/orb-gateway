@@ -27,6 +27,7 @@ jar {
 
 configurations {
     all{
+        exclude group: 'commons-logging', module: 'commons-logging'
         exclude module: 'spring-boot-starter-tomcat'
         exclude module: 'undertow-websockets-jsr'
     }
@@ -38,7 +39,6 @@ bootJar {
 }
 
 dependencies {
-    implementation project(path: ":orb-common-module")
     implementation "org.springframework.boot:spring-boot-starter-security"
     implementation "org.springframework.boot:spring-boot-starter-oauth2-client"
     implementation "com.google.api-client:google-api-client:${googleApiVer}"

@@ -4,7 +4,7 @@ package com.orb.gateway.auth.config.security;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
-import com.orb.gateway.common.model.AuthMemberDeviceInfo;
+import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
 
 public interface AuthenticationTokenProvider {
 

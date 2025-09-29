@@ -4,7 +4,7 @@ server:
 spring:
   application:
     name: orb-gateway-api
-  cloud:
+#  cloud:
 #    compatibility-verifier:
 #      enabled: false # Spring Boot 3.5.0과 Spring Cloud 릴리스 트레인 호환성 검사 비활성화
     gateway:
