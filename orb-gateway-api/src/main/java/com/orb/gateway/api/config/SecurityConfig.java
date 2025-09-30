@@ -56,12 +56,6 @@ public class SecurityConfig {
             if (roles == null) {
                 return Collections.emptyList();
             }
-//            roles = roles.stream()
-//                    .map(role -> "ROLE_" + role) // Prefix roles with "ROLE_"
-//                    .collect(Collectors.toList());
-            //roles 의 값을 systemout 으로 확인
-            roles.forEach(role-> System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>"+role));
-
 
             return roles.stream()
                     .map(SimpleGrantedAuthority::new)

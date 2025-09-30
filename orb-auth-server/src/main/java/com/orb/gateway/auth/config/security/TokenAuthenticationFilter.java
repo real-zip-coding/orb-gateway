@@ -5,7 +5,6 @@ import com.orb.gateway.auth.common.constraint.ErrorType;
 import com.orb.gateway.auth.common.exception.Exceptions;
 import com.orb.gateway.auth.common.model.CommonResponse;
 import com.orb.gateway.auth.entity.redis.TokenBlackList;
-import com.orb.gateway.auth.v1.repository.jpa.MemberDeviceRepository;
 import com.orb.gateway.auth.v1.repository.redis.TokenBlackListRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;

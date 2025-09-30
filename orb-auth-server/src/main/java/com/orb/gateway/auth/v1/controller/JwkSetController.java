@@ -5,21 +5,21 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAPublicKey;
-import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/oauth2")
 @RequiredArgsConstructor
 public class JwkSetController {
-
     private final KeyPair keyPair;
 
-    @GetMapping("/oauth2/jwks")
+    @GetMapping("/jwks")
     public Map<String, Object> jwks() {
         RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
         JWK jwk = new RSAKey.Builder(publicKey)

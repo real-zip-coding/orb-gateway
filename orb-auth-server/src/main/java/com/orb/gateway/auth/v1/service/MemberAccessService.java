@@ -1,20 +1,18 @@
-package com.orb.gateway.auth.config.security;
+package com.orb.gateway.auth.v1.service;
 
 import com.orb.gateway.auth.common.exception.Exceptions;
+import com.orb.gateway.auth.config.security.AuthenticationToken;
+import com.orb.gateway.auth.config.security.JwtTokenProvider;
 import com.orb.gateway.auth.entity.mysql.*;
 import com.orb.gateway.auth.entity.redis.TokenBlackList;
 import com.orb.gateway.auth.v1.impl.UserDetailsImpl;
 import com.orb.gateway.auth.v1.model.dto.AuthInfoDTO;
 import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
-import com.orb.gateway.auth.v1.model.request.SignInRequest;
-import com.orb.gateway.auth.v1.model.response.MemberAccountResponse;
 import com.orb.gateway.auth.v1.model.response.SearchMemberResponse;
 import com.orb.gateway.auth.v1.model.response.SignInResponse;
 import com.orb.gateway.auth.v1.model.response.SignupRequest;
 import com.orb.gateway.auth.v1.repository.dsl.AuthProcDSLRepository;
 import com.orb.gateway.auth.v1.repository.jpa.*;
-import com.orb.gateway.auth.entity.redis.CheckComparedVerification;
-import com.orb.gateway.auth.v1.repository.redis.CheckComparedVerificationRepository;
 import com.orb.gateway.auth.v1.repository.redis.TokenBlackListRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;

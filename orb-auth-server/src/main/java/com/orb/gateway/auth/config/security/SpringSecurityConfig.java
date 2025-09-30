@@ -36,23 +36,16 @@ public class SpringSecurityConfig {
             "/api-docs/**",
             "/swagger-ui/**",
             "/error",
+            "/oauth2/jwks",
             "/v1/auth/**"
     };
 
     @Qualifier("daoAuthenticationProvider")
     @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter(
-            AuthenticationTokenProvider authenticationTokenProvider,
-            TokenBlackListRepository tokenBlackListRepository) {
-        return new TokenAuthenticationFilter(authenticationTokenProvider, tokenBlackListRepository);
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, TokenAuthenticationFilter tokenAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
-            .addFilterBefore(requestLoggingFilter, UsernamePasswordAuthenticationFilter.class)
             .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
             .exceptionHandling(handler -> handler
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)

@@ -2,7 +2,7 @@ package com.orb.gateway.auth.v1.controller;
 
 import com.orb.gateway.auth.common.annotation.AuthMemberHeaderInfo;
 import com.orb.gateway.auth.common.model.CommonResponse;
-import com.orb.gateway.auth.config.security.MemberAccessService;
+import com.orb.gateway.auth.v1.service.MemberAccessService;
 import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
 import com.orb.gateway.auth.v1.model.request.SignInRequest;
 import com.orb.gateway.auth.v1.model.response.SignInResponse;
@@ -35,10 +35,5 @@ public class AuthController extends CommonResponse {
     ) {
         SignInResponse res = memberAccessService.signIn(signInRequest.getEmail(), signInRequest.getPassword(), deviceInfo);
         return this.resSuccess(res);
-    }
-
-    @PostMapping("/test")
-    public ResponseEntity<?> test() {
-        return this.resSuccessNoContents();
     }
 }
