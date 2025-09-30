@@ -39,7 +39,7 @@ import static java.util.stream.Collectors.groupingBy;
  */
 @OpenAPIDefinition(
         servers = {
-                @io.swagger.v3.oas.annotations.servers.Server(url = "http://localhost:8080", description = "local")
+                @io.swagger.v3.oas.annotations.servers.Server(url = "http://localhost:8088", description = "local")
         })
 @Configuration
 public class SwaggerConfig {
@@ -58,9 +58,9 @@ public class SwaggerConfig {
                         .bearerFormat("JWT"));
 
         Info info = new Info()
-            .version("v0.1.0")
-            .title("US Musicow API")
-            .description("US Musicow API 명세입니다.");
+            .version("v0.0.1")
+            .title("Orb API")
+            .description("Orb API 명세입니다.");
 
         return new OpenAPI()
                 .info(info)

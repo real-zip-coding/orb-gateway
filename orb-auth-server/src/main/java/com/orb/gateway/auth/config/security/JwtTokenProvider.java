@@ -1,12 +1,19 @@
 package com.orb.gateway.auth.config.security;
 
+import com.orb.gateway.auth.common.constraint.AccessTokenType;
+import com.orb.gateway.auth.common.constraint.ClaimType;
+import com.orb.gateway.auth.common.exception.Exceptions;
+import com.orb.gateway.auth.entity.mysql.Member;
+import com.orb.gateway.auth.entity.mysql.Role;
+import com.orb.gateway.auth.v1.impl.UserDetailsImpl;
+import com.orb.gateway.auth.v1.model.dto.AuthInfoDTO;
+import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
+import com.orb.gateway.auth.v1.repository.dsl.AuthProcDSLRepository;
+import com.orb.gateway.auth.v1.service.CustomUserDetailService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.orb.gateway.auth.entity.mysql.Member;
-import com.orb.gateway.auth.entity.mysql.Role;
-import com.orb.gateway.auth.common.exception.Exceptions;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,14 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
-import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
-import com.orb.gateway.auth.common.constraint.ClaimType;
-import com.orb.gateway.auth.common.constraint.AccessTokenType;
-import com.orb.gateway.auth.v1.impl.UserDetailsImpl;
-import com.orb.gateway.auth.v1.model.dto.AuthInfoDTO;
-import com.orb.gateway.auth.v1.repository.dsl.AuthProcDSLRepository;
-import com.orb.gateway.auth.v1.service.CustomUserDetailService;
 
+import java.security.KeyPair;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -32,7 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider implements AuthenticationTokenProvider {     // JWT 토큰을 생성 및 검증 모듈
-    @Value("${jwt.secret}") private String SECRET_KEY;
+    private final KeyPair keyPair;
     @Value("${jwt.expiredTime}") private long TOKEN_EXPIRED_TIME;
     @Value("${jwt.refreshExpiredTime}") private long REFRESH_TOKEN_EXPIRED_TIME;
 
@@ -79,7 +80,7 @@ public class JwtTokenProvider implements AuthenticationTokenProvider {     // JW
     public Claims getClaim(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
+                    .setSigningKey(keyPair.getPublic())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
@@ -98,7 +99,7 @@ public class JwtTokenProvider implements AuthenticationTokenProvider {     // JW
     public boolean validateToken(String token) {
         if (ObjectUtils.isNotEmpty(token)) {
             try {
-                Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
+                Jwts.parser().setSigningKey(keyPair.getPublic()).parseClaimsJws(token);
                 return true;
             } catch (SignatureException e) {
                 log.error("Invalid JWT signature", e.getMessage(), e);
@@ -155,7 +156,7 @@ public class JwtTokenProvider implements AuthenticationTokenProvider {     // JW
 
         JwtBuilder jwtBuilder = Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setHeaderParam("alg", "HS512")
+                .setHeaderParam("alg", "RS256")
                 .setSubject("atk")
                 .claim(ClaimType.MEMBER_ID.getMessageKey(), authInfoDTO.getMemberNo())
                 .claim(ClaimType.EMAIL.getMessageKey(), authInfoDTO.getEmail())
@@ -164,7 +165,7 @@ public class JwtTokenProvider implements AuthenticationTokenProvider {     // JW
                 .claim(ClaimType.TOKEN_TYPE.getMessageKey(), accessTokenType)
                 .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
                 .setExpiration(Date.from(expiredAt.atZone(ZoneId.systemDefault()).toInstant()))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY);
+                .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate());
 
         if (isDeviceAuth)
             jwtBuilder.claim(ClaimType.APP_UID.getMessageKey(), authInfoDTO.getAppUid());
@@ -182,11 +183,11 @@ public class JwtTokenProvider implements AuthenticationTokenProvider {     // JW
 
         return Jwts.builder()
                 .setHeaderParam("typ", "JWT")
-                .setHeaderParam("alg", "HS512")
+                .setHeaderParam("alg", "RS256")
                 .setSubject("rtk")
                 .setIssuedAt(Date.from(now.atZone(ZoneId.systemDefault()).toInstant()))
                 .setExpiration(Date.from(expiredAt.atZone(ZoneId.systemDefault()).toInstant()))
-                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
+                .signWith(SignatureAlgorithm.RS256, keyPair.getPrivate())
                 .compact();
     }
 

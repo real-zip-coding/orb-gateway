@@ -1,9 +1,3 @@
-plugins {
-    id "org.springframework.boot"
-    id "io.spring.dependency-management"
-    id "java"
-}
-
 ext {
     queryDslVer = "5.0.0"
     mysqlVer = "8.0.32"
@@ -43,8 +37,4 @@ tasks.withType(JavaCompile) {
 
 clean {
     delete file(querydslSrcDir)
-}
-
-tasks.named("test") {
-    useJUnitPlatform()
 }

@@ -1,6 +1,5 @@
 buildscript {
     ext {
-        applicationVer = '0.1.0'
         googleApiVer = '2.3.0'
         jsonSimpleVer = '1.1.1'
         modelmapperVer = '3.0.0'
@@ -8,7 +7,6 @@ buildscript {
         junitJupiterVer = '5.8.1'
         testngVer = '7.1.0'
         nimbusdsVer = '3.10'
-        servletApi = '4.0.1'
     }
 }
 
@@ -19,18 +17,10 @@ plugins {
     id 'db'
 }
 
-group = "us.musicow.client.v1"
+group = "com.orb.gateway.auth"
 
 jar {
     enabled = false
-}
-
-configurations {
-    all{
-        exclude group: 'commons-logging', module: 'commons-logging'
-        exclude module: 'spring-boot-starter-tomcat'
-        exclude module: 'undertow-websockets-jsr'
-    }
 }
 
 bootJar {
@@ -47,6 +37,7 @@ dependencies {
     implementation "com.googlecode.json-simple:json-simple:${jsonSimpleVer}"
     implementation "org.modelmapper:modelmapper:${modelmapperVer}"
     implementation "javax.xml.bind:jaxb-api:${jaxbApiVer}"
+    implementation "com.nimbusds:nimbus-jose-jwt:${nimbusdsVer}"
 
     testImplementation "org.springframework.boot:spring-boot-starter-test"
     testImplementation "org.junit.jupiter:junit-jupiter:${junitJupiterVer}"
@@ -54,4 +45,6 @@ dependencies {
     testImplementation "org.testng:testng:${testngVer}"
     testImplementation "org.springframework.restdocs:spring-restdocs-mockmvc"
 
+    // For Netty DNS resolution on MacOS
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.104.Final:osx-aarch_64'
 }

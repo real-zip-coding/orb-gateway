@@ -17,9 +17,4 @@ dependencies {
     annotationProcessor "com.fasterxml.jackson.core:jackson-databind"
     annotationProcessor "com.fasterxml.jackson.core:jackson-annotations"
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
-
-}
-
-tasks.named("test") {
-    useJUnitPlatform()
 }

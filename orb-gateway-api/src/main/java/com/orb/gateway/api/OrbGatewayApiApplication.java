@@ -9,6 +9,10 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDiscoveryClient
 public class OrbGatewayApiApplication {
     public static void main(String[] args) {
-        SpringApplication.run(OrbGatewayApiApplication.class, args);
+        try {
+            SpringApplication.run(OrbGatewayApiApplication.class, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

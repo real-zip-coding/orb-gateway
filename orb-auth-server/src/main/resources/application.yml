@@ -1,7 +1,7 @@
 active-profile: local
 
 server:
-  port: 8080
+  port: 8088
   undertow:
     always-set-keep-alive: true # HTTP 사양에서 요구하지 않는 경우에도 'Connection: keep-alive' 헤더를 모든 응답에 추가해야 하는지 여부.
     buffer-size: # 각 버퍼의 크기입니다. 기본값은 JVM에서 사용할 수 있는 최대 메모리 양에서 파생됩니다.
@@ -23,6 +23,16 @@ server:
       prefix: access_log. # Log file name prefix.
       suffix: log # Log file name suffix.
       rotate: true
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka # Eureka 서버 URL
+  instance:
+#    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+    hostname: localhost
 
 spring:
   profiles:
@@ -80,15 +90,9 @@ spring:
           min-idle: 10
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: http://localhost:8761/eureka # Eureka 서버 URL
-  instance:
-    hostname: localhost
 
 jwt:
-  secret: Musicow1234$$
+  secret: Orb1234$$
   expiredTime: ${JWT_EXPIRED_TIME}
   refreshExpiredTime: ${REFRESH_EXPIRED_TIME}
   claims: email # 인증 시 얻어올 정보
@@ -99,9 +103,9 @@ logging:
     org:
       springframework:
         transaction:
-          interceptor: INFO
+          interceptor: ${LOGGING_LEVEL}
         orm:
-          jpa: INFO
+          jpa: ${LOGGING_LEVEL}
   logback:
     rollingpolicy:
       clean-history-on-start: false
@@ -110,6 +114,7 @@ logging:
     console: ${LOGGING_PATTERN}
 
 springdoc:
+  override-with-generic-response: false
   api-docs:
     enabled: true
     path: /api-docs

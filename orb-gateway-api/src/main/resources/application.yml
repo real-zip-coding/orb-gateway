@@ -1,33 +1,38 @@
 server:
-  port: 8080
+  port: 80
 
 spring:
   application:
     name: orb-gateway-api
-#  cloud:
-#    compatibility-verifier:
-#      enabled: false # Spring Boot 3.5.0과 Spring Cloud 릴리스 트레인 호환성 검사 비활성화
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://localhost:8088/oauth2/jwks # orb-auth-server의 JWKS 엔드포인트
+  cloud:
     gateway:
       default-filters:
         - AddResponseHeader=X-Gateway, favy-gateway
       server:
         webflux:
           routes:
-          # 가상의 'command-service'에 대한 예시 라우트
-          - id: command_service_route
-            uri: lb://command-service # Eureka에 등록된 'command-service'로 로드 밸런싱
+          # 가상의 'auth-service'에 대한 예시 라우트
+          - id: orb-auth-server_route
+            uri: lb://orb-auth-server # Eureka에 등록된 'auth-service'로 로드 밸런싱
             predicates:
-              - Path=/command/**
+              - Path=/auth/**
             filters:
-              - RewritePath=/command/(?<segment>.*), /${segment}
+              - RewritePath=/auth/(?<segment>.*), /v1/auth/${segment}
+              - AddUserHeaders
 
-          # 가상의 'query-service'에 대한 예시 라우트
-          - id: query_service_route
-            uri: lb://query-service # Eureka에 등록된 'query-service'로 로드 밸런싱
-            predicates:
-              - Path=/query/**
-            filters:
-              - RewritePath=/query/(?<segment>.*), /${segment}
+#          # 가상의 'query-service'에 대한 예시 라우트
+#          - id: query_service_route
+#            uri: lb://query-service # Eureka에 등록된 'query-service'로 로드 밸런싱
+#            predicates:
+#              - Path=/query/**
+#            filters:
+#              - RewritePath=/query/(?<segment>.*), /${segment}
+#              - AddUserHeaders # 사용자 정보 헤더 추가 필터 적용
 
 eureka:
   client:
@@ -35,3 +40,17 @@ eureka:
       defaultZone: http://localhost:8761/eureka # Eureka 서버 URL
   instance:
     hostname: localhost
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        transaction:
+          interceptor: INFO
+  logback:
+    rollingpolicy:
+      clean-history-on-start: false
+  pattern:
+    level: INFO
+    console: "%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]){blue}%clr([${HOSTNAME}])[%thread][%X{uuid}][%p][%c]%clr([%M:%L]) - %msg %nopex%n%ex{full}"

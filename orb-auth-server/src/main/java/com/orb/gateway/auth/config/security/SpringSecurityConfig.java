@@ -1,6 +1,7 @@
 package com.orb.gateway.auth.config.security;
 
 import com.google.common.collect.ImmutableList;
+import com.orb.gateway.auth.v1.repository.redis.TokenBlackListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -18,12 +19,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SpringSecurityConfig {
-    private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final RestAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final RequestLoggingFilter requestLoggingFilter;
@@ -32,13 +36,19 @@ public class SpringSecurityConfig {
             "/api-docs/**",
             "/swagger-ui/**",
             "/error",
-            "/v1/auth/sign-in",
-            "/v1/auth/sign-up",
+            "/v1/auth/**"
     };
 
     @Qualifier("daoAuthenticationProvider")
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public TokenAuthenticationFilter tokenAuthenticationFilter(
+            AuthenticationTokenProvider authenticationTokenProvider,
+            TokenBlackListRepository tokenBlackListRepository) {
+        return new TokenAuthenticationFilter(authenticationTokenProvider, tokenBlackListRepository);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, TokenAuthenticationFilter tokenAuthenticationFilter) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
@@ -62,6 +72,13 @@ public class SpringSecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public KeyPair keyPair() throws NoSuchAlgorithmException {
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+        keyPairGenerator.initialize(2048); // 2048-bit key size
+        return keyPairGenerator.generateKeyPair();
     }
 
     @Bean

@@ -31,7 +31,7 @@ public class MemberAuthToken extends BaseTime {
     @Column(name = "member_auth_token_modify_cnt", nullable = false)
     private int modifyCount;
 
-    @Column(name = "member_auth_token_value", nullable = false)
+    @Column(name = "member_auth_token_value", nullable = false, length = 500)
     private String authToken;
 
     public enum AuthType {
