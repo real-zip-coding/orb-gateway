@@ -5,3 +5,6 @@
 build/
 /**/.gradle/
 .gradle/
+/logs/access_log.2025-09-29.log
+/logs/access_log.log
+/**/src/main/generated/
