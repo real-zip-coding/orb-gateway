@@ -6,16 +6,16 @@ spring:
     name: orb-eureka-server
   cloud:
     compatibility-verifier:
-      enabled: false
+      enabled: false #Spring Cloud 버전 호환성 검증 비활성화
 
 
 eureka:
   client:
-    register-with-eureka: false
-    fetch-registry: false
+    register-with-eureka: false #eureka 서버는 다른 eureka 서버에 등록하지 않음
+    fetch-registry: false #eureka 서버는 다른 eureka 서버에 등록하지 않음
   server:
-    enable-self-preservation: false
-    response-cache-update-interval-ms: 5000
-    eviction-interval-timer-in-ms: 10000
+    enable-self-preservation: false #(자기보호모드) 네트워크 장애가 발생하여 서비스와 통신이 되지 않아도 해당 서비스를 해제되는 것을 방지하는 모드 (운영 환경에서는 활성화, 개발시에는 비활성화)
+    response-cache-update-interval-ms: 5000 #eureka 서버가 클라이언트에게 응답을 캐싱하는 시간 간격 (기본값: 30초)
+    eviction-interval-timer-in-ms: 10000 #eureka 서버가 비활성화된 인스턴스를 제거하는 시간 간격 (기본값: 60초)
   instance:
     hostname: localhost

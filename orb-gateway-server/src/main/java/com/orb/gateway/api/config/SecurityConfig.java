@@ -33,9 +33,13 @@ public class SecurityConfig {
     private String jwkSetUri;
 
     public static final String[] PUBLIC_URIS = {
+            "/actuator/**",
             "/auth/**",
-            "/actuator/**"
     };
+
+    private enum RoleType {
+        UNVERIFIED, VERIFIED
+    }
 
     @Bean
     public SecurityWebFilterChain securityFilterChain(ServerHttpSecurity http) {
@@ -43,6 +47,7 @@ public class SecurityConfig {
             .csrf(ServerHttpSecurity.CsrfSpec::disable)
             .authorizeExchange(exchanges -> exchanges
                 .pathMatchers(PUBLIC_URIS).permitAll() // Permit public URIs
+                .pathMatchers("/test/**").hasAuthority(RoleType.VERIFIED.name())
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2

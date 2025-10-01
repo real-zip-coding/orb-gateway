@@ -2,6 +2,7 @@ package com.orb.gateway.auth.config.security;
 
 import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.bouncycastle.util.io.pem.PemWriter;
@@ -29,6 +30,7 @@ import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+@Slf4j
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
@@ -112,7 +114,7 @@ public class SpringSecurityConfig {
                 PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
 
                 keyPair = new KeyPair(publicKey, privateKey);
-                System.out.println("Loaded existing RSA KeyPair from files.");
+                log.info("Loaded existing RSA KeyPair from files.");
 
             }
         } else {
@@ -120,7 +122,7 @@ public class SpringSecurityConfig {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
             keyPairGenerator.initialize(2048); // 2048-bit key size
             keyPair = keyPairGenerator.generateKeyPair();
-            System.out.println("Generated new RSA KeyPair.");
+            log.info("Generated new RSA KeyPair.");
 
             // Save private key to file
             try (FileWriter privateKeyWriter = new FileWriter(privateKeyFile);
@@ -136,7 +138,7 @@ public class SpringSecurityConfig {
                 pemWriter.writeObject(new PemObject("RSA PUBLIC KEY", keyPair.getPublic().getEncoded()));
                 pemWriter.flush();
 
-                System.out.println("Saved new RSA KeyPair to files.");
+                log.info("Saved new RSA KeyPair to files.");
             }
         }
         return keyPair;
