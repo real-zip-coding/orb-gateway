@@ -8,3 +8,4 @@ build/
 /logs/access_log.2025-09-29.log
 /logs/access_log.log
 /**/src/main/generated/
+/orb-auth-server/src/main/resources/keys/

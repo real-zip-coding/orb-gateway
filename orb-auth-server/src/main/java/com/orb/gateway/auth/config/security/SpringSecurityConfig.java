@@ -2,7 +2,11 @@ package com.orb.gateway.auth.config.security;
 
 import com.google.common.collect.ImmutableList;
 import lombok.RequiredArgsConstructor;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
+import org.bouncycastle.util.io.pem.PemWriter;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -21,18 +25,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
+import java.security.*;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemReader;
-import org.bouncycastle.util.io.pem.PemWriter;
-
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
 
 @RequiredArgsConstructor
 @Configuration
@@ -41,7 +36,9 @@ import java.security.NoSuchAlgorithmException;
 public class SpringSecurityConfig {
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final RestAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final RequestLoggingFilter requestLoggingFilter;
+
+    @Value("${orb.security.rsa.key-location}")
+    private String rsaKeyLocation;
 
     public static final String[] PUBLIC_URIS = {
             "/api-docs/**",
@@ -80,7 +77,7 @@ public class SpringSecurityConfig {
 
     @Bean
     public KeyPair keyPair() throws Exception {
-        String keysDirectoryPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "keys";
+        String keysDirectoryPath = rsaKeyLocation;
         File keysDirectory = new File(keysDirectoryPath);
         if (!keysDirectory.exists()) {
             keysDirectory.mkdirs();

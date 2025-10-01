@@ -97,6 +97,11 @@ jwt:
   refreshExpiredTime: ${REFRESH_EXPIRED_TIME}
   claims: email # 인증 시 얻어올 정보
 
+orb:
+  security:
+    rsa:
+      key-location: ./keys # Location to store RSA private and public keys
+
 logging:
   level:
     root: ${LOGGING_LEVEL}

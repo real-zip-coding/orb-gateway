@@ -2,32 +2,25 @@ package com.orb.gateway.api.config;
 
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.KeySourceException;
-import com.nimbusds.jose.RemoteKeySourceException;
 import com.nimbusds.jose.jwk.JWKMatcher;
 import com.nimbusds.jose.jwk.JWKSelector;
 import com.nimbusds.jose.jwk.source.JWKSource;
-
-import java.net.URL;
-import java.time.Duration;
-import java.util.function.Function;
-
 import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.SignedJWT;
-import reactor.core.publisher.Flux;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+import reactor.core.publisher.Flux;
 
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -57,7 +50,7 @@ public class SecurityConfig {
                     try {
                         jwt.jwtDecoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter());
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeException(e);  //TODO Handle exception properly
                     }
                 })
             );
@@ -80,7 +73,7 @@ public class SecurityConfig {
                     try {
                         return Flux.fromIterable(jwkSource.get(jwkSelector, null));
                     } catch (KeySourceException e) {
-                        throw new RuntimeException(e);
+                        throw new RuntimeException(e); //TODO Handle exception properly
                     }
                 }
         ).build();
