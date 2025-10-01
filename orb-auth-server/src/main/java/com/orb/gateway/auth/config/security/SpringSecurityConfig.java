@@ -1,7 +1,6 @@
 package com.orb.gateway.auth.config.security;
 
 import com.google.common.collect.ImmutableList;
-import com.orb.gateway.auth.v1.repository.redis.TokenBlackListRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +17,18 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.security.KeyFactory;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import org.bouncycastle.util.io.pem.PemObject;
+import org.bouncycastle.util.io.pem.PemReader;
+import org.bouncycastle.util.io.pem.PemWriter;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -68,10 +79,70 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public KeyPair keyPair() throws NoSuchAlgorithmException {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048); // 2048-bit key size
-        return keyPairGenerator.generateKeyPair();
+    public KeyPair keyPair() throws Exception {
+        String keysDirectoryPath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "main" + File.separator + "resources" + File.separator + "keys";
+        File keysDirectory = new File(keysDirectoryPath);
+        if (!keysDirectory.exists()) {
+            keysDirectory.mkdirs();
+        }
+
+        String privateKeyPath = keysDirectoryPath + File.separator + "rsa_private.pem";
+        String publicKeyPath = keysDirectoryPath + File.separator + "rsa_public.pem";
+
+        File privateKeyFile = new File(privateKeyPath);
+        File publicKeyFile = new File(publicKeyPath);
+
+        KeyPair keyPair;
+
+        if (privateKeyFile.exists() && publicKeyFile.exists()) {
+            // Load existing key pair
+            try (FileReader privateKeyReader = new FileReader(privateKeyFile);
+                 FileReader publicKeyReader = new FileReader(publicKeyFile)) {
+
+                // Read private key
+                PemReader pemReader = new PemReader(privateKeyReader);
+                PemObject pemObject = pemReader.readPemObject();
+                byte[] privateKeyBytes = pemObject.getContent();
+                PKCS8EncodedKeySpec privateKeySpec = new PKCS8EncodedKeySpec(privateKeyBytes);
+                KeyFactory keyFactory = KeyFactory.getInstance("RSA");
+                PrivateKey privateKey = keyFactory.generatePrivate(privateKeySpec);
+
+                // Read public key
+                pemReader = new PemReader(publicKeyReader);
+                pemObject = pemReader.readPemObject();
+                byte[] publicKeyBytes = pemObject.getContent();
+                X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
+                PublicKey publicKey = keyFactory.generatePublic(publicKeySpec);
+
+                keyPair = new KeyPair(publicKey, privateKey);
+                System.out.println("Loaded existing RSA KeyPair from files.");
+
+            }
+        } else {
+            // Generate new key pair
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048); // 2048-bit key size
+            keyPair = keyPairGenerator.generateKeyPair();
+            System.out.println("Generated new RSA KeyPair.");
+
+            // Save private key to file
+            try (FileWriter privateKeyWriter = new FileWriter(privateKeyFile);
+                 FileWriter publicKeyWriter = new FileWriter(publicKeyFile)) {
+
+                // Write private key
+                PemWriter pemWriter = new PemWriter(privateKeyWriter);
+                pemWriter.writeObject(new PemObject("RSA PRIVATE KEY", keyPair.getPrivate().getEncoded()));
+                pemWriter.flush();
+
+                // Write public key
+                pemWriter = new PemWriter(publicKeyWriter);
+                pemWriter.writeObject(new PemObject("RSA PUBLIC KEY", keyPair.getPublic().getEncoded()));
+                pemWriter.flush();
+
+                System.out.println("Saved new RSA KeyPair to files.");
+            }
+        }
+        return keyPair;
     }
 
     @Bean

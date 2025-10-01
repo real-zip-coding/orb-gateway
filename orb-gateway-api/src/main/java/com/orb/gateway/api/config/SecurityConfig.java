@@ -1,5 +1,21 @@
 package com.orb.gateway.api.config;
 
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jose.KeySourceException;
+import com.nimbusds.jose.RemoteKeySourceException;
+import com.nimbusds.jose.jwk.JWKMatcher;
+import com.nimbusds.jose.jwk.JWKSelector;
+import com.nimbusds.jose.jwk.source.JWKSource;
+
+import java.net.URL;
+import java.time.Duration;
+import java.util.function.Function;
+
+import com.nimbusds.jose.jwk.source.JWKSourceBuilder;
+import com.nimbusds.jose.proc.SecurityContext;
+import com.nimbusds.jwt.SignedJWT;
+import reactor.core.publisher.Flux;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -37,14 +53,37 @@ public class SecurityConfig {
                 .anyExchange().authenticated()
             )
             .oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwt -> jwt.jwtDecoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter()))
+                .jwt(jwt -> {
+                    try {
+                        jwt.jwtDecoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter());
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                })
             );
         return http.build();
     }
 
     @Bean
-    public ReactiveJwtDecoder jwtDecoder() {
-        return NimbusReactiveJwtDecoder.withJwkSetUri(jwkSetUri).build();
+    public ReactiveJwtDecoder jwtDecoder() throws Exception {
+        URL jwkSetUrl = new URL(jwkSetUri);
+
+        JWKSource<SecurityContext> jwkSource = JWKSourceBuilder.create(jwkSetUrl)
+                .cache(60000, 10000) // Cache life time of 1 minute, refresh 10 seconds before expiry
+                .build();
+
+        return NimbusReactiveJwtDecoder.withJwkSource(
+                signedJWT -> {
+                    JWSHeader jwsHeader = signedJWT.getHeader();
+                    JWKMatcher jwkMatcher = JWKMatcher.forJWSHeader(jwsHeader);
+                    JWKSelector jwkSelector = new JWKSelector(jwkMatcher);
+                    try {
+                        return Flux.fromIterable(jwkSource.get(jwkSelector, null));
+                    } catch (KeySourceException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+        ).build();
     }
 
     // Custom converter to map JWT claims to Spring Security authorities
