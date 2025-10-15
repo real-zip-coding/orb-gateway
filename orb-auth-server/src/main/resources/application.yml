@@ -92,7 +92,7 @@ spring:
     exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 
 jwt:
-  secret: Orb1234$$
+  secret: ${JWT_SECRET}
   expiredTime: ${JWT_EXPIRED_TIME}
   refreshExpiredTime: ${REFRESH_EXPIRED_TIME}
   claims: email # 인증 시 얻어올 정보
@@ -100,7 +100,7 @@ jwt:
 orb:
   security:
     rsa:
-      key-location: ./keys # Location to store RSA private and public keys
+      key-location: orb-auth-server/src/main/resources/keys # Location to store RSA private and public keys
 
 logging:
   level:
