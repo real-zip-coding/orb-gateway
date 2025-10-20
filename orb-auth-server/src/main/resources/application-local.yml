@@ -6,6 +6,8 @@ REDIS_URL: localhost
 REDIS_PORT: 6379
 REDIS_PW: test1234
 
+JWT_SECRET: Orb1234$$
+
 LOGGING_LEVEL: INFO
 LOGGING_PATTERN: "%clr([%d{yyyy-MM-dd HH:mm:ss.SSS}]){blue}%clr([${HOSTNAME}])[%thread][%X{uuid}][%p][%c]%clr([%M:%L]) - %msg %nopex%n%ex{full}"
 
