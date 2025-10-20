@@ -8,7 +8,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          jwk-set-uri: http://localhost:8088/oauth2/jwks # orb-auth-server의 JWKS 엔드포인트
+          jwk-set-uri: http://localhost:8088/oauth2/jwks # orb-auth-server의 JWKS 엔드포인트로 직접호출
+      blacklist-uri: http://localhost:8088/oauth2/blacklist # orb-auth-server의 블랙리스트 엔드포인트로 직접호출
 
 eureka:
   client:

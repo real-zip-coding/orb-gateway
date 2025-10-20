@@ -123,6 +123,18 @@ public class MemberAccessService {
     }
 
     /**
+     * 주어진 Access Token이 블랙리스트에 있는지 확인합니다.
+     *
+     * @param accessTokenInHeader 요청 헤더에서 받은 Access Token(Bearer ${access-token}).
+     * @return 토큰이 블랙리스트에 있으면 true, 그렇지 않으면 false.
+     */
+    @Transactional(readOnly = true)
+    public boolean isTokenBlacklisted(String accessTokenInHeader) {
+        String accessToken = this.resolveTokenProc(accessTokenInHeader);
+        return tokenBlackListRepository.findByAccessToken(accessToken) != null;
+    }
+
+    /**
      * 사용자 인증 객체로 토큰을 조회합니다.
      *
      * @param claims 사용자 인증객체.
@@ -325,17 +337,6 @@ public class MemberAccessService {
     }
 
     /**
-     * 6자리 난수 인증 코드를 생성합니다.
-     *
-     * @return 6자리 인증 코드 문자열.
-     */
-    private String getRandomVerificationCode() {
-        Random random = new Random();
-        int randomCode = 100000 + random.nextInt(900000); // 6자리 난수 생성
-        return String.format("%06d", randomCode); // 6자리 LPadding
-    }
-
-    /**
      * 인증된 사용자의 이메일을 보안 컨텍스트에서 가져옵니다.
      *
      * @return 인증된 사용자의 이메일.
@@ -347,28 +348,4 @@ public class MemberAccessService {
             throw new Exceptions.NotFoundAuth();
         return authentication.getName();
     }
-
-    /**
-     * 이메일 인증 템플릿을 로드 및 포맷
-     *
-     * @return 본문
-     */
-    private String verificationEmailFormat(String title, String code) {
-        try {
-            // 클래스패스 기준으로 리소스 로드
-            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("templates/email/verification.html");
-            if (inputStream == null) {
-                throw new Exceptions.IllegalArgumentException("Email template not found");
-            }
-
-            String template = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            return template
-                    .replace("{title}", title)
-                    .replace("{code}", code);
-        } catch (Exception e) {
-            log.warn("Email template not found");
-            return "Verification Code: " + code; // Fallback in case of error
-        }
-    }
-
 }

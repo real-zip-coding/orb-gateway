@@ -2,6 +2,7 @@ package com.orb.gateway.auth.v1.controller;
 
 import com.orb.gateway.auth.common.annotation.AuthMemberHeaderInfo;
 import com.orb.gateway.auth.common.model.CommonResponse;
+import com.orb.gateway.auth.config.security.AuthenticationToken;
 import com.orb.gateway.auth.v1.service.MemberAccessService;
 import com.orb.gateway.auth.v1.model.dto.AuthMemberDeviceInfo;
 import com.orb.gateway.auth.v1.model.request.SignInRequest;
@@ -35,5 +36,23 @@ public class AuthController extends CommonResponse {
     ) {
         SignInResponse res = memberAccessService.signIn(signInRequest.getEmail(), signInRequest.getPassword(), deviceInfo);
         return this.resSuccess(res);
+    }
+
+    @PutMapping("/reissue")
+    public ResponseEntity<?> reissue(
+            @RequestHeader("Authorization") String accessToken,
+            @RequestHeader("RefreshToken") String refreshToken,
+            @AuthMemberHeaderInfo AuthMemberDeviceInfo deviceInfo
+    ) {
+        AuthenticationToken reissuedToken = memberAccessService.reissue(accessToken, refreshToken, deviceInfo);
+        return this.resSuccess(reissuedToken);
+    }
+
+    @DeleteMapping("/sign-out")
+    public ResponseEntity<Void> signOut(
+            @RequestHeader("Authorization") String accessToken
+    ) {
+        memberAccessService.signOut(accessToken);
+        return this.resSuccessNoContents();
     }
 }
