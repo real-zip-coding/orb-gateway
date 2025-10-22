@@ -27,6 +27,12 @@ public class GatewayRouteConfig {
                                 .filter(blacklistTokenGatewayFilterFactory.apply(new BlacklistTokenGatewayFilterFactory.Config()))
                                 .addResponseHeader("X-Gateway", "favy-gateway"))
                         .uri("lb://orb-auth-server"))
+                .route("orb-discover-server_route", r -> r.path("/discover/**")
+                        .filters(f -> f.rewritePath("/discover/(?<segment>.*)", "/${segment}")
+                                .filter(addUserHeadersGatewayFilterFactory.apply(new AddUserHeadersGatewayFilterFactory.Config()))
+                                .filter(blacklistTokenGatewayFilterFactory.apply(new BlacklistTokenGatewayFilterFactory.Config()))
+                                .addResponseHeader("X-Gateway", "favy-gateway"))
+                        .uri("lb://orb-discover-server"))
                 .build();
     }
 }
